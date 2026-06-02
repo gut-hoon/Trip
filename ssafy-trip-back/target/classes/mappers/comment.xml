@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.trip.model.dao.CommentDao">
+	<insert id="insert" useGeneratedKeys="true" keyProperty="no">
+	  insert into comment (content, users_no, article_no, parent_no, reg_date)
+	  values (#{content}, #{usersNo}, #{articleNo}, #{parentNo}, #{regDate})
+	</insert>
+	<delete id="delete">
+		delete from comment where no=#{no} or parent_no = #{no}
+	</delete>
+	<update id="update">
+		update comment set content=#{content}, reg_date = #{regDate}
+		where no=#{no}
+	</update>
+	<select id="selectByArticleNo" resultMap="commentResultMap">
+	  SELECT c.*, u.name FROM comment c join users u on c.users_no = u.no 
+	  WHERE article_no = #{articleNo}
+	  ORDER BY parent_no IS NULL DESC, parent_no ASC, no ASC
+	</select>
+	<resultMap id="commentResultMap"
+		type="com.ssafy.trip.model.dto.Comment">
+		<id property="no" column="no" />
+		<result property="content" column="content" />
+		<result property="usersNo" column="users_no" />
+		<result property="articleNo" column="article_no" />
+		<result property="parentNo" column="parent_no" />
+		<result property="username" column="name" />
+		<result property="regDate" column="reg_date" />
+	</resultMap>
+</mapper>

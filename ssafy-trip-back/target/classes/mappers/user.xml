@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.trip.model.dao.UserDao">
+	<insert id="insert" useGeneratedKeys="true" keyProperty="no">
+		insert into users (password, name, email, role)
+		values (#{password}, #{name}, #{email}, #{role})
+	</insert>
+
+	<update id="update">
+		update users set
+		name=#{name}, password=#{password}, role=#{role}, refresh=#{refresh}
+		where email=#{email}
+	</update>
+
+	<delete id="delete">
+		delete from users where id=#{id}
+	</delete>
+	<select id="selectOne" resultType="User">
+		select * from users where email=#{email} and password = #{password}
+	</select>
+
+	<select id="selectByEmail" resultType="User">
+		select * from users where email=#{email}
+	</select>
+
+	<select id="selectAll" resultMap="userMap">
+		select * from users order by mno desc
+	</select>
+	
+	<update id="updateRefresh">
+		update users set refresh=#{refresh} where email=#{email}
+	</update>
+
+
+	<resultMap id="userMap" type="com.ssafy.trip.model.dto.User">
+		<id property="no" column="no" />
+		<result property="password" column="password" />
+		<result property="name" column="name" />
+		<result property="email" column="email" />
+		<result property="role" column="role" />
+		<result property="refresh" column="refresh" />
+	</resultMap>
+
+</mapper>

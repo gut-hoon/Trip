@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.trip.model.dao.ArticleDao">
+	<insert id="insert" useGeneratedKeys="true" keyProperty="no">
+		insert
+		into article(title, users_no, content, reg_date, view_cnt, is_article)
+		values (#{title}, #{usersNo}, #{content}, #{regDate}, #{viewCnt},
+		#{isArticle})
+	</insert>
+
+	<delete id="delete">
+		delete from article where no = #{no}
+	</delete>
+
+	<update id="update">
+		update article set title=#{title}, content=#{content}, is_article=#{isArticle} where no=#{no}
+	</update>
+
+	<select id="selectOne">
+		select a.*, u.name from article a join users u on
+		u.no = a.users_no where a.no=#{no}
+	</select>
+
+	<select id="selectAll">
+		select a.*, u.name from article a join users u on
+		u.no = a.users_no order by a.is_article asc, a.no asc 
+	</select>
+	
+	<select id="selectRecent">
+		select a.*, u.name from article a join users u on
+		u.no = a.users_no where a.is_article = 1 order by a.no desc limit 3
+	</select>
+
+	<resultMap id="articleResultMap"
+		type="com.ssafy.trip.model.dto.Article">
+		<id property="no" column="no" />
+		<result property="title" column="title" />
+		<result property="usersNo" column="users_no" />
+		<result property="content" column="content" />
+		<result property="regDate" column="reg_date" />
+		<result property="viewCnt" column="view_cnt" />
+		<result property="isArticle" column="is_article" />
+	</resultMap>
+</mapper>

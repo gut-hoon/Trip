@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.trip.model.dao.AttractionDao">
+	<select id="selectBySido">
+		select * from attractions
+		where area_code=#{sidoCode}
+		limit 20
+	</select>
+	
+	<select id="selectByContent">
+		select * from attractions
+		where content_type_id = #{contentType}
+		limit 20
+	</select>
+	
+	<select id="selectByGugun">
+		select * from attractions
+		where si_gun_gu_code = #{gugunCode}
+		limit 20
+	</select>
+	
+	<select id="selectBySidoAndGugun" parameterType="map">
+		select * from attractions
+		where area_code = #{sidoCode} AND content_type_id = #{contentType}
+	</select>
+</mapper>

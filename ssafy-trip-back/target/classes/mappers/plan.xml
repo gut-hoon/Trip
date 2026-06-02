@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.trip.model.dao.PlanDao">
+	<insert id="insert" useGeneratedKeys="true" keyProperty="no">
+		insert
+		into plan(title, users_no, `desc`, expense, start_date, end_date,
+		share)
+		values(#{title}, #{usersNo}, #{desc}, #{expense}, #{startDate},
+		#{endDate}, #{share})
+	</insert>
+
+	<insert id="insertDetail" parameterType="java.util.List">
+		insert into plandetail(place_no, seq, plan_id, place_url, place_name,
+		place_address)
+		values
+		<foreach collection="list" item="item" separator=",">
+			(#{item.placeNo}, #{item.seq}, #{item.planId}, #{item.placeUrl},
+			#{item.placeName}, #{item.placeAddress})
+		</foreach>
+	</insert>
+
+	<delete id="delete">
+		delete from plan where id = #{no}
+	</delete>
+
+	<update id="update">
+		update plan set title=#{title}, `desc`=#{desc},
+		expense=#{expense}, start_date=#{startDate}, end_date=#{endDate},
+		share=#{share}
+		where id=#{no}
+	</update>
+
+	<!-- Plan만 조회 (PlanDetail 제외) -->
+	<select id="selectOne" resultMap="planResultMap"
+		parameterType="int">
+		select
+		p.id, p.title, p.users_no, p.`desc`, p.expense,
+		p.start_date,
+		p.end_date, p.share,
+		u.name as user_name
+		from plan p
+		join
+		users u on u.no = p.users_no
+		where p.id = #{no}
+	</select>
+
+	<!-- PlanDetail만 조회하는 새로운 메서드 -->
+	<select id="selectDetailsByPlanId"
+		resultMap="planDetailResultMap" parameterType="int">
+		select place_no, seq,
+		plan_id, place_url, place_name, place_address
+		from plandetail
+		where
+		plan_id = #{planId}
+		order by seq
+	</select>
+
+	<select id="selectAll" resultMap="planResultMap">
+		select p.id, p.title,
+		p.users_no, p.`desc`, p.expense,
+		p.start_date, p.end_date, p.share,
+		u.name as user_name
+		from plan p
+		join users u on u.no = p.users_no
+		order
+		by p.id
+	</select>
+
+	<delete id="deleteDetailsByPlanId">
+		DELETE FROM plandetail WHERE plan_id = #{planId}
+	</delete>
+
+	<select id="selectchart" resultType="com.ssafy.trip.model.dto.PlaceCount">
+		SELECT place_name, COUNT(*) AS count
+		FROM plandetail
+		GROUP BY place_name;
+	</select>
+	
+	<select id="selectMyPlan" resultMap="planResultMap">
+		select * from plan where users_no=#{userNo}
+	</select>
+
+	<resultMap id="planResultMap"
+		type="com.ssafy.trip.model.dto.Plan">
+		<id property="no" column="id" />
+		<result property="title" column="title" />
+		<result property="usersNo" column="users_no" />
+		<result property="desc" column="desc" />
+		<result property="expense" column="expense" />
+		<result property="startDate" column="start_date" />
+		<result property="endDate" column="end_date" />
+		<result property="share" column="share" />
+		<result property="userName" column="user_name" />
+	</resultMap>
+
+	<resultMap id="planDetailResultMap"
+		type="com.ssafy.trip.model.dto.PlanDetail">
+		<result property="placeNo" column="place_no" />
+		<result property="seq" column="seq" />
+		<result property="planId" column="plan_id" />
+		<result property="placeUrl" column="place_url" />
+		<result property="placeName" column="place_name" />
+		<result property="placeAddress" column="place_address" />
+	</resultMap>
+	
+	<resultMap id="chartResultMap" type="com.ssafy.trip.model.dto.PlaceCount">
+		<result property="placeName" column="place_name"/>
+		<result property="count" column="count"/>
+	</resultMap>
+
+</mapper>
